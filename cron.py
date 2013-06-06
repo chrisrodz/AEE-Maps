@@ -6,16 +6,16 @@ import prepa
 
 city_data = json.loads(prepa.getAll())
 
-for key,incidents in city_data.iteritems():
-    for incident in incidents:
-        if not Area.query.filter_by(name=incident['Area']).first():
-            new = Area(pueblo=key,name=incident['Area'])
+for town in city_data:
+    for incident in town['incidents']:
+        if not Area.query.filter_by(name=incident['area']).first():
+            new = Area(pueblo=town['name'],name=incident['area'])
             db.session.add(new)
             db.session.commit()
-        area_instance = Area.query.filter_by(name=incident['Area']).first()
-        time = incident['LastUpdate'].split(' ')
+        area_instance = Area.query.filter_by(name=incident['area']).first()
+        time = incident['last_update'].split(' ')
         last_update = datetime.strptime(time[0]+' '+time[1], "%m/%d/%Y %H:%M")
-        i = Incident(area_id=area_instance.id,status=incident['Status'],last_update=last_update,parent_id=None)
+        i = Incident(area_id=area_instance.id,status=incident['status'],last_update=last_update,parent_id=None)
         db.session.add(i)
         db.session.commit()
 
