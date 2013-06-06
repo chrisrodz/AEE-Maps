@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 from datetime import datetime
 import sendgrid
@@ -6,7 +7,8 @@ import os
 from aeemaps import db, Area, Incident, Subscriber
 import prepa
 
-def sendmail(email,msg):
+
+def sendmail(email, msg):
     # make a secure connection to SendGrid
     s = sendgrid.Sendgrid(os.environ.get('SENDGRID_USERNAME'), os.environ.get('SENDGRID_PASSWORD'), secure=True)
 
@@ -71,7 +73,7 @@ for town in city_data:
             db.session.commit()
             subscribers = Subscriber.query.filter_by(area=area_instance).all()
             for subscriber in subscribers:
-                message = "Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
+                message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
                 sendmail(subscriber.email, message)
         elif last_incident:
             i = Incident(area_id=area_instance.id, status=incident['status'],
@@ -81,7 +83,7 @@ for town in city_data:
                 db.session.commit()
                 subscribers = Subscriber.query.filter_by(area=area_instance).all()
                 for subscriber in subscribers:
-                    message = "Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
+                    message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
                     sendmail(subscriber.email, message)
         else:
             i = Incident(area_id=area_instance.id, status=incident['status'],
@@ -90,5 +92,5 @@ for town in city_data:
             db.session.commit()
             subscribers = Subscriber.query.filter_by(area=area_instance).all()
             for subscriber in subscribers:
-                message = "Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
+                message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
                 sendmail(subscriber.email, message)
