@@ -19,6 +19,13 @@ class Area(db.Model):
     pueblo = db.Column(db.String(80))
     name = db.Column(db.String(80), unique=True)
 
+    def to_dict(self):
+        return {
+            "id":self.id,
+            "pueblo":self.pueblo,
+            "name":self.name
+        }
+
 
 class Incident(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,6 +35,14 @@ class Incident(db.Model):
     last_update = db.Column(db.DateTime)
     parent_id = db.Column(db.Integer, db.ForeignKey('incident.id'))
 
+    def to_dict(self):
+        return {
+            "id":self.id,
+            "area":self.area.to_dict(),
+            "status":self.status,
+            "last_update":self.last_update,
+            "parent":self.parent_id.to_dict()
+        }
 
 # Admin Model views
 admin.add_view(ModelView(Area, db.session))
@@ -61,7 +76,8 @@ def getHistoricData(municipio):
 
     for area in Area.query.filter_by(pueblo=municipio).all():
         for incident in Incident.query.filter_by(area=area).all():
-            incidentes.append(incident)
+            print incident.to_dict()
+            incidentes.append(incident.to_dict())
 
     return json.dumps(incidentes)
 
