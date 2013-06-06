@@ -52,7 +52,6 @@ def getData(municipio):
         json_response = prepa.getByCity(municipio)
         return json_response
 
-<<<<<<< HEAD
 @app.route('/getdata/historic/municipios', methods=['Get'])
 def getAllHistoricData():
     # Retrive all historic data from database
@@ -62,10 +61,8 @@ def getAllHistoricData():
 @app.route('/getdata/historic/municipios/<municipio>', methods=['Get'])
 def getHistoricData(municipio):
     # Retrive historic data for a specified municipality from database
-    incidents = Incidents.query.filter_by(pueblo=municipio)
+    incidents = Incidents.query.filter_by(area=Area.query.filter_by(pueblo=municipio))
     return json.dump(incidentes)
-=======
->>>>>>> 41137548a279d49eee4add15d4c7a2fc7bf6187e
 
 if __name__ == "__main__":
     app.debug = True
