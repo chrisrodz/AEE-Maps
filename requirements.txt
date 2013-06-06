@@ -1,9 +1,15 @@
+Fabric==1.6.1
 Flask==0.9
+Flask-Admin==1.0.6
 Flask-SQLAlchemy==0.16
+Flask-WTF==0.8.3
 Jinja2==2.7
 MarkupSafe==0.18
 SQLAlchemy==0.8.1
+WTForms==1.0.4
 Werkzeug==0.8.3
+paramiko==1.10.1
 psycopg2==2.5
+pycrypto==2.6
 suds==0.4
 wsgiref==0.1.2
