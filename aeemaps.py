@@ -25,7 +25,7 @@ class Incidents(db.Model):
     def __repr__(self):
         return "%s: %s" % (self.pueblo,self.name)
 
-@app.route('/getdata/municipios', methods=['Get'])
+@app.route('/getdata', methods=['Get'])
 def getAllData():
     json_response = prepa.getAll()
     return json_response
