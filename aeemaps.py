@@ -4,7 +4,7 @@ import prepa
 
 app = Flask(__name__)
 
-@app.route('/getdata/municipios', methods=['Get'])
+@app.route('/getdata', methods=['Get'])
 def getAllData():
     json_response = prepa.getAll()
     return json_response
