@@ -8,12 +8,12 @@ import prepa
 
 def sendmail(email,msg):
     # make a secure connection to SendGrid
-    s = sendgrid.Sendgrid(os.environ.get('SENDGRID_USERNAME'), os.environ.get('SENDGRID_USERNAME'), secure=True)  
+    s = sendgrid.Sendgrid(os.environ.get('SENDGRID_USERNAME'), os.environ.get('SENDGRID_PASSWORD'), secure=True)
 
     # make a message object
     message = sendgrid.Message("christian.etpr10@gmail.com", "Nuevo Reporte de Avería", msg, msg)
     # add a recipient
-    message.add_to(email, email)   
+    message.add_to(email, email)
 
     # use the Web API to send your message
     s.web.send(message)
