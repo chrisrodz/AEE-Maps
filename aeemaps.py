@@ -26,6 +26,9 @@ class Area(db.Model):
             "name":self.name
         }
 
+    def __repr__(self):
+        return u'{}: {}'.format(self.pueblo, self.name)
+
 
 class Incident(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,16 +61,18 @@ def getAllData():
 @app.route('/getdata/municipios/<municipio>', methods=['Get'])
 def getData(municipio):
     if municipio is None:
-        return {error: "municipio can't be empty"}
+        return {'error': "municipio can't be empty"}
     else:
         json_response = prepa.getByCity(municipio)
         return json_response
+
 
 @app.route('/getdata/historic', methods=['Get'])
 def getAllHistoricData():
     # Retrive all historic data from database
     incidents = Incident.query.all()
     return json.dumps(incidents)
+
 
 @app.route('/getdata/historic/municipios/<municipio>', methods=['Get'])
 def getHistoricData(municipio):
