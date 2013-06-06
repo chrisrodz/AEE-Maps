@@ -9,13 +9,17 @@ def getAll():
     summary = aee_client.service.getBreakdownsSummary()
     for city in summary:
         name = city.r1TownOrCity
-        results = aee_client.service.getBreakdownsByTownOrCity(name)
-        total_averias = []
-        for result in results:
-            averia = {}
-            averia['Area'] = result.r2Area
-            averia['Status'] = result.r3Status
-            averia['LastUpdate'] = result.r4LastUpdate
-            total_averias.append(averia)
-        count[name] = total_averias
+        count[name] = json.loads(getByCity(name))
     return json.dumps(count)
+
+def getByCity(city):
+    city = city.upper()
+    results = aee_client.service.getBreakdownsByTownOrCity(city)
+    total_averias = []
+    for result in results:
+        averia = {}
+        averia['Area'] = result.r2Area
+        averia['Status'] = result.r3Status
+        averia['LastUpdate'] = result.r4LastUpdate
+        total_averias.append(averia)
+    return json.dumps(total_averias)
