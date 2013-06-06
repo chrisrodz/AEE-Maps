@@ -11,12 +11,12 @@ db = SQLAlchemy(app)
 
 class Area(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    pueblo = db.Column(db.String(80), unique=True)
+    pueblo = db.Column(db.String(80))
     name = db.Column(db.String(80), unique=True)
     def __repr__(self):
-        return "%s: %s" % (self.pueblo,self.name)
+        return u"%s: %s" % (self.pueblo,self.name)
 
-class Incidents(db.Model):
+class Incident(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     area_id = db.Column(db.Integer)
     status = db.Column(db.String(140))
