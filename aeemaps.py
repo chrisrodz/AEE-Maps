@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask.ext.admin import Admin
 from flask.ext.admin.contrib.sqlamodel import ModelView
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -21,9 +21,9 @@ class Area(db.Model):
 
     def to_dict(self):
         return {
-            "id":self.id,
-            "pueblo":self.pueblo,
-            "name":self.name
+            "id": self.id,
+            "pueblo": self.pueblo,
+            "name": self.name
         }
 
     def __repr__(self):
@@ -40,12 +40,20 @@ class Incident(db.Model):
 
     def to_dict(self):
         return {
-            "id":self.id,
-            "area":self.area.to_dict(),
-            "status":self.status,
-            "last_update":self.last_update,
-            "parent":self.parent_id.to_dict()
+            "id": self.id,
+            "area": self.area.to_dict(),
+            "status": self.status,
+            "last_update": self.last_update,
+            "parent": self.parent_id.to_dict()
         }
+
+
+# class Subscriber(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     area = db.relationship('Area', backref=db.backref('children', lazy='dynamic'))
+#     area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
+#     email = db.Column(db.String(255))
+
 
 # Admin Model views
 admin.add_view(ModelView(Area, db.session))
@@ -85,6 +93,17 @@ def getHistoricData(municipio):
             incidentes.append(incident.to_dict())
 
     return json.dumps(incidentes)
+
+
+@app.route('/map')
+def map():
+    return render_template('index.html')
+
+
+@app.route('/geotiles/pueblos.json')
+def geotile():
+    return render_template('pueblos.json')
+
 
 if __name__ == "__main__":
     app.debug = True
