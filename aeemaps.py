@@ -52,13 +52,13 @@ admin.add_view(ModelView(Area, db.session))
 admin.add_view(ModelView(Incident, db.session))
 
 
-@app.route('/getdata', methods=['Get'])
+@app.route('/', methods=['Get'])
 def getAllData():
     json_response = prepa.getAll()
     return json_response
 
 
-@app.route('/getdata/municipios/<municipio>', methods=['Get'])
+@app.route('/municipios/<municipio>', methods=['Get'])
 def getData(municipio):
     if municipio is None:
         return {'error': "municipio can't be empty"}
@@ -67,14 +67,14 @@ def getData(municipio):
         return json_response
 
 
-@app.route('/getdata/historic', methods=['Get'])
+@app.route('/historic', methods=['Get'])
 def getAllHistoricData():
     # Retrive all historic data from database
     incidents = Incident.query.all()
     return json.dumps(incidents)
 
 
-@app.route('/getdata/historic/municipios/<municipio>', methods=['Get'])
+@app.route('/historic/municipios/<municipio>', methods=['Get'])
 def getHistoricData(municipio):
     # Retrive historic data for a specified municipality from database
     incidentes = []
