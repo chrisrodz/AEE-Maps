@@ -22,14 +22,14 @@ for town in city_data:
     areas = Area.query.filter_by(pueblo=town['name']).all()
     for area in areas:
         last_incident = Incident.query.filter_by(area=area).order_by('-id').first()
-        close = False
-        for incident in town['incidents']:
-            print incident
-            if last_incident and incident['area'] == last_incident.area.name:
-                close = True
-        if close:
-            last_incident.status = 'Closed'
-            db.session.commit()
+        if last_incident:
+            close = True
+            for incident in town['incidents']:
+                if last_incident and incident['area'] == last_incident.area.name:
+                    close = False
+            if close:
+                last_incident.status = 'Closed'
+                db.session.commit()
 
     for incident in town['incidents']:
         # If Area does not exist create it
@@ -52,11 +52,17 @@ for town in city_data:
         # same as last incident
         if last_incident and last_incident.status == 'Closed':
             i = Incident(area_id=area_instance.id, status=incident['status'],
-                         last_update=last_update, parent_id=last_incident.parent_id)
+                         last_update=last_update, parent_id=None)
             db.session.add(i)
             db.session.commit()
+        elif last_incident:
+            i = Incident(area_id=area_instance.id, status=incident['status'],
+                last_update=last_update, parent_id=last_incident.parent_id)
+            if last_incident.status != i.status:
+                db.session.add(i)
+                db.session.commit()
         else:
             i = Incident(area_id=area_instance.id, status=incident['status'],
-                         last_update=last_update, parent_id=None)
+                last_update=last_update, parent_id=None)
             db.session.add(i)
             db.session.commit()
