@@ -31,7 +31,7 @@ class Incident(db.Model):
     parent_id = db.Column(db.Integer, db.ForeignKey('incident.id'))
 
     def __repr__(self):
-        return "%s: %s" % (self.pueblo, self.name)
+        return "%s: %s" % (self.area, self.status)
 
 # Admin Model views
 admin.add_view(ModelView(Area, db.session))
@@ -47,22 +47,27 @@ def getAllData():
 @app.route('/getdata/municipios/<municipio>', methods=['Get'])
 def getData(municipio):
     if municipio is None:
-        return "error: municipio can't be empty"
+        return {error: "municipio can't be empty"}
     else:
         json_response = prepa.getByCity(municipio)
         return json_response
 
-@app.route('/getdata/historic/municipios', methods=['Get'])
+@app.route('/getdata/historic', methods=['Get'])
 def getAllHistoricData():
     # Retrive all historic data from database
-    incidents = Incidents.query.all()
+    incidents = Incident.query.all()
     return json.dumps(incidents)
 
 @app.route('/getdata/historic/municipios/<municipio>', methods=['Get'])
 def getHistoricData(municipio):
     # Retrive historic data for a specified municipality from database
-    incidents = Incidents.query.filter_by(area=Area.query.filter_by(pueblo=municipio))
-    return json.dump(incidentes)
+    incidentes = []
+
+    for area in Area.query.filter_by(pueblo=municipio).all():
+        for incident in Incident.query.filter_by(area=area).all():
+            incidentes.append(incident)
+
+    return json.dumps(incidentes)
 
 if __name__ == "__main__":
     app.debug = True
