@@ -18,8 +18,6 @@ class Area(db.Model):
     pueblo = db.Column(db.String(80))
     name = db.Column(db.String(80), unique=True)
 
-    def __repr__(self):
-        return u"%s: %s" % (self.pueblo,self.name)
 
 class Incident(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,9 +26,6 @@ class Incident(db.Model):
     status = db.Column(db.String(140))
     last_update = db.Column(db.DateTime)
     parent_id = db.Column(db.Integer, db.ForeignKey('incident.id'))
-
-    def __repr__(self):
-        return "%s: %s" % (self.pueblo, self.name)
 
 # Admin Model views
 admin.add_view(ModelView(Area, db.session))

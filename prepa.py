@@ -5,11 +5,14 @@ aee_url = 'http://wss.prepa.com/services/BreakdownReport?wsdl'
 aee_client = Client(aee_url)
 
 def getAll():
-    count = {}
+    count = []
     summary = aee_client.service.getBreakdownsSummary()
     for city in summary:
+        data = {}
         name = city.r1TownOrCity
-        count[name] = json.loads(getByCity(name))
+        data['name'] = name
+        data['incidents'] = json.loads(getByCity(name))
+        count.append(data)
     return json.dumps(count)
 
 def getByCity(city):
@@ -18,8 +21,8 @@ def getByCity(city):
     total_averias = []
     for result in results:
         averia = {}
-        averia['Area'] = result.r2Area
-        averia['Status'] = result.r3Status
-        averia['LastUpdate'] = result.r4LastUpdate
+        averia['area'] = result.r2Area
+        averia['status'] = result.r3Status
+        averia['last_update'] = result.r4LastUpdate
         total_averias.append(averia)
     return json.dumps(total_averias)
