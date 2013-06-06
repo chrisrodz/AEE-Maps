@@ -1,8 +1,22 @@
 import json
 from datetime import datetime
+import sendgrid
+import os
 
-from aeemaps import db, Area, Incident
+from aeemaps import db, Area, Incident, Subscriber
 import prepa
+
+def sendmail(email,msg):
+    # make a secure connection to SendGrid
+    s = sendgrid.Sendgrid(os.environ.get('SENDGRID_USERNAME'), os.environ.get('SENDGRID_USERNAME'), secure=True)  
+
+    # make a message object
+    message = sendgrid.Message("christian.etpr10@gmail.com", "Nuevo Reporte de Avería", msg, msg)
+    # add a recipient
+    message.add_to(email, email)   
+
+    # use the Web API to send your message
+    s.web.send(message)
 
 city_data = json.loads(prepa.getAll())
 # json_data = ""
@@ -55,14 +69,26 @@ for town in city_data:
                          last_update=last_update, parent_id=None)
             db.session.add(i)
             db.session.commit()
+            subscribers = Subscriber.query.filter_by(area=area_instance).all()
+            for subscriber in subscribers:
+                message = "Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
+                sendmail(subscriber.email, message)
         elif last_incident:
             i = Incident(area_id=area_instance.id, status=incident['status'],
                 last_update=last_update, parent_id=last_incident.parent_id)
             if last_incident.status != i.status:
                 db.session.add(i)
                 db.session.commit()
+                subscribers = Subscriber.query.filter_by(area=area_instance).all()
+                for subscriber in subscribers:
+                    message = "Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
+                    sendmail(subscriber.email, message)
         else:
             i = Incident(area_id=area_instance.id, status=incident['status'],
                 last_update=last_update, parent_id=None)
             db.session.add(i)
             db.session.commit()
+            subscribers = Subscriber.query.filter_by(area=area_instance).all()
+            for subscriber in subscribers:
+                message = "Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
+                sendmail(subscriber.email, message)
