@@ -4,6 +4,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 import prepa
 import os
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:////tmp/test.db')
@@ -37,6 +38,18 @@ def getData(municipio):
     else:
         json_response = prepa.getByCity(municipio)
         return json_response
+
+@app.route('/getdata/historic/municipios', methods=['Get'])
+def getAllHistoricData():
+    # Retrive all historic data from database
+    incidents = Incidents.query.all()
+    return json.dumps(incidents)
+
+@app.route('/getdata/historic/municipios/<municipio>', methods=['Get'])
+def getHistoricData(municipio):
+    # Retrive historic data for a specified municipality from database
+    incidents = Incidents.query.filter_by(pueblo=municipio)
+    return json.dump(incidentes)
 
 if __name__ == "__main__":
     app.debug=True
