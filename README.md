@@ -12,6 +12,8 @@ Hack for PR Tech Summit. Visualize AEE Breakdowns.
 ## To-do
 
 - Cron should correctly create new incidents, update new ones, and close them.
+- Form that allows users to subscribe to receive notifications of incidents for an area
+- Remove or lock down admin
 - Improvements to REST API: 
   - Sensible resource names
 	- Hypermedia links
@@ -19,7 +21,9 @@ Hack for PR Tech Summit. Visualize AEE Breakdowns.
 	- Versioning
 	- Meta data
 	- Pagination
-- Ideally move the map somewhere else - its more of an example.
 - CORS support
-- github.io page with more information and examples
+- github.io page with more information and examples - like our map
 - Visualization example of archived data
+- Allow users to unsubscribe to an area
+- Webhooks
+	- Look for a standard way to do this and document it so othe government API's can do the same
