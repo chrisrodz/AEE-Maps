@@ -1,0 +1,59 @@
+{
+    "explanation" : "Each object in test is a different run of cron.py. On the first run the incident is saved as a new incident.
+                    On the second run a new incident is created referencing the first one. On the third run a third incident is created
+                    also referencing the first one. On the fourth run the third incident is updated to a Closed status and a incident in
+                    another area is created. And on the fifth run a new incident is created with the same area as the first three, but
+                    without a parent as it's a new set of incidents."
+    "test": [
+        {
+            "incidents": [
+                    {
+                        "status": "Averia Reportada",
+                        "area": "Bo Guayo",
+                        "last_update": "06/07/2013 08:36 pm"
+                    }
+            ],
+            "name": "AGUADA"
+        },
+        {
+            "incidents": [
+                    {
+                        "status": "Personal Asignado",
+                        "area": "Bo Guayo",
+                        "last_update": "06/07/2013 09:36 pm"
+                    }
+            ],
+            "name": "AGUADA"
+        },
+        {
+            "incidents": [
+                    {
+                        "status": "Personal Trabajando",
+                        "area": "Bo Guayo",
+                        "last_update": "06/07/2013 10:36 pm"
+                    }
+            ],
+            "name": "AGUADA"
+        },
+        {
+            "incidents": [
+                    {
+                        "status": "Averia Reportada",
+                        "area": "Rexville",
+                        "last_update": "06/07/2013 10:50 pm"
+                    }
+            ],
+            "name": "BAYAMON"
+        },
+        {
+            "incidents": [
+                    {
+                        "status": "Averia Reportada",
+                        "area": "Bo Guayo",
+                        "last_update": "06/08/2013 09:40 am"
+                    }
+            ],
+            "name": "AGUADA"
+        },
+    ]
+}

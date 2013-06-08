@@ -36,6 +36,7 @@ class Incident(db.Model):
     area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
     status = db.Column(db.String(140))
     last_update = db.Column(db.DateTime)
+    parent = db.relationship('Incident', backref='children', lazy='select', remote_side=[id])
     parent_id = db.Column(db.Integer, db.ForeignKey('incident.id'))
 
     def to_dict(self):
@@ -46,6 +47,9 @@ class Incident(db.Model):
             "last_update": self.last_update,
             "parent": self.parent_id.to_dict()
         }
+
+    def __repr__(self):
+        return u'{}: {}'.format(self.status,self.last_update)
 
 
 class Subscriber(db.Model):

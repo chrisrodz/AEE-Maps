@@ -20,32 +20,40 @@ def sendmail(email, msg):
     # use the Web API to send your message
     s.web.send(message)
 
+def get_datetime(update):
+    time = update.split(' ')
+    return datetime.strptime(time[0]+' '+time[1], "%m/%d/%Y %H:%M")
+
 city_data = json.loads(prepa.getAll())
-# json_data = ""
+# data = json.dumps("Insert test data here")
+# city_data = json.loads(data)
 
 # For each area in db
 # Get last incident
 # If area is not in city_data
 # Update last incident status to 'Completed'
 
-# Find Incidents for this area_instance
-# Look for the last incident found and check if it's the one that closes the incident.
-# If its the one that closes the insident we create a new incident with parent_id=None
-# Else create an incident for that parent_id
+areas = Area.query.all()
+for area in areas:
+    last_incident = Incident.query.filter_by(area=area).order_by('-id').first()
+    if last_incident:
+        close = True
+        for town in city_data:
+            if last_incident.area.pueblo == town['name']:
+                for incident in town['incidents']:
+                    if incident['area'] == last_incident.area.name:
+                        close = False
+    if close:
+        last_incident.status = 'Closed'
+        db.session.commit()
+
 
 for town in city_data:
 
-    areas = Area.query.filter_by(pueblo=town['name']).all()
-    for area in areas:
-        last_incident = Incident.query.filter_by(area=area).order_by('-id').first()
-        if last_incident:
-            close = True
-            for incident in town['incidents']:
-                if last_incident and incident['area'] == last_incident.area.name:
-                    close = False
-            if close:
-                last_incident.status = 'Closed'
-                db.session.commit()
+    # Find Incidents for this area_instance
+    # Look for the last incident found and check if it's the one that closes the incident.
+    # If its the one that closes the insident we create a new incident with parent_id=None
+    # Else create an incident for that parent_id
 
     for incident in town['incidents']:
         # If Area does not exist create it
@@ -57,12 +65,12 @@ for town in city_data:
         # Get instance of Area
         area_instance = Area.query.filter_by(pueblo=town['name'], name=incident['area']).first()
 
-        # Setup datetime object of incident
-        time = incident['last_update'].split(' ')
-        last_update = datetime.strptime(time[0]+' '+time[1], "%m/%d/%Y %H:%M")
+        last_update = get_datetime(incident['last_update'])
 
         # Get last incident of this area
         last_incident = Incident.query.filter_by(area=area_instance).order_by('-id').first()
+
+        ocurred = False
 
         # If last incident is closed save as new collection, else it's parent is the
         # same as last incident
@@ -71,26 +79,32 @@ for town in city_data:
                          last_update=last_update, parent_id=None)
             db.session.add(i)
             db.session.commit()
-            subscribers = Subscriber.query.filter_by(area=area_instance).all()
-            for subscriber in subscribers:
-                message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
-                sendmail(subscriber.email, message)
-        elif last_incident:
+            ocurred = True
+
+        elif last_incident and last_incident.parent_id != None:
             i = Incident(area_id=area_instance.id, status=incident['status'],
                 last_update=last_update, parent_id=last_incident.parent_id)
             if last_incident.status != i.status:
                 db.session.add(i)
                 db.session.commit()
-                subscribers = Subscriber.query.filter_by(area=area_instance).all()
-                for subscriber in subscribers:
-                    message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
-                    sendmail(subscriber.email, message)
+                ocurred = True
+        elif last_incident and last_incident.parent_id == None:
+            i = Incident(area_id=area_instance.id, status=incident['status'],
+                last_update=last_update, parent_id=last_incident.id)
+            if last_incident.status != i.status:
+                db.session.add(i)
+                db.session.commit()
+                ocurred = True
         else:
             i = Incident(area_id=area_instance.id, status=incident['status'],
                 last_update=last_update, parent_id=None)
             db.session.add(i)
             db.session.commit()
+            ocurred = True
+        
+        if ocurred:
             subscribers = Subscriber.query.filter_by(area=area_instance).all()
             for subscriber in subscribers:
                 message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
-                sendmail(subscriber.email, message)
+                # sendmail(subscriber.email, message)
+
