@@ -11,7 +11,7 @@ Hack for PR Tech Summit. Visualize AEE Breakdowns.
 
 ## To-do
 
-- Cron should correctly create new incidents, update new ones, and close them.
+- Cron should correctly create new incidents, update new ones, and close them. **(Ready for review)**
 - Form that allows users to subscribe to receive notifications of incidents for an area
 - Remove or lock down admin
 - Improvements to REST API: 
