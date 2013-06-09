@@ -5,5 +5,6 @@ from aeemaps import db
 
 def create_db():
     print 'Creating database...'
-    local('rm /tmp/test.db')
+    with settings(warn_only=True):
+        local('rm /tmp/test.db')
     db.create_all()

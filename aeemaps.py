@@ -44,12 +44,12 @@ class Incident(db.Model):
             "id": self.id,
             "area": self.area.to_dict(),
             "status": self.status,
-            "last_update": self.last_update,
-            "parent": self.parent_id.to_dict()
+            "last_update": self.last_update.isoformat(),
+            "parent": self.parent.to_dict() if self.parent else None
         }
 
     def __repr__(self):
-        return u'{}: {}'.format(self.status,self.last_update)
+        return u'{}: {}'.format(self.status, self.last_update.isoformat())
 
 
 class Subscriber(db.Model):
@@ -90,28 +90,31 @@ def getData(municipio):
 @app.route('/historic', methods=['Get'])
 def getAllHistoricData():
     # Retrive all historic data from database
-    incidents = Incident.query.all()
+    incidents = []
+
+    for incident in Incident.query.all():
+        incidents.append(incident.to_dict())
+
     return json.dumps(incidents)
 
 
 @app.route('/historic/municipios/<municipio>', methods=['Get'])
 def getHistoricData(municipio):
     # Retrive historic data for a specified municipality from database
-    incidentes = []
+    incidents = []
 
-    for area in Area.query.filter_by(pueblo=municipio).all():
+    for area in Area.query.filter_by(pueblo=municipio.upper()).all():
         for incident in Incident.query.filter_by(area=area).all():
-            print incident.to_dict()
-            incidentes.append(incident.to_dict())
+            incidents.append(incident.to_dict())
 
-    return json.dumps(incidentes)
+    return json.dumps(incidents)
 
 
 @app.route('/subscribe', methods=['POST'])
 def subscribe():
     try:
         data = json.loads(request.data)
-    except (ValueError, KeyError, TypeError):
+    except:
         return json.dumps({'error': 'Invalid data'})
 
     area = Area.query.filter_by(id=int(data['area_id'])).first()

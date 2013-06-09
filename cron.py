@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
-import json
-from datetime import datetime
-import sendgrid
 import os
+import json
+import logging
+from datetime import datetime
+
+import sendgrid
 
 from aeemaps import db, Area, Incident, Subscriber
 import prepa
+
+logging.basicConfig(level=logging.ERROR)
 
 
 def sendmail(email, msg):
@@ -20,9 +24,11 @@ def sendmail(email, msg):
     # use the Web API to send your message
     s.web.send(message)
 
+
 def get_datetime(update):
     time = update.split(' ')
     return datetime.strptime(time[0]+' '+time[1], "%m/%d/%Y %H:%M")
+
 
 city_data = json.loads(prepa.getAll())
 # data = json.dumps("Insert test data here")
@@ -45,6 +51,7 @@ for area in areas:
                         close = False
     if close:
         last_incident.status = 'Closed'
+        print 'Closing: ', last_incident.status, last_incident.area.name
         db.session.commit()
 
 
@@ -81,30 +88,30 @@ for town in city_data:
             db.session.commit()
             ocurred = True
 
-        elif last_incident and last_incident.parent_id != None:
+        elif last_incident and last_incident.parent_id is not None:
             i = Incident(area_id=area_instance.id, status=incident['status'],
-                last_update=last_update, parent_id=last_incident.parent_id)
+                         last_update=last_update, parent_id=last_incident.parent_id)
             if last_incident.status != i.status:
                 db.session.add(i)
                 db.session.commit()
                 ocurred = True
-        elif last_incident and last_incident.parent_id == None:
+        elif last_incident and last_incident.parent_id is None:
             i = Incident(area_id=area_instance.id, status=incident['status'],
-                last_update=last_update, parent_id=last_incident.id)
+                         last_update=last_update, parent_id=last_incident.id)
             if last_incident.status != i.status:
                 db.session.add(i)
                 db.session.commit()
                 ocurred = True
         else:
             i = Incident(area_id=area_instance.id, status=incident['status'],
-                last_update=last_update, parent_id=None)
+                         last_update=last_update, parent_id=None)
             db.session.add(i)
             db.session.commit()
             ocurred = True
-        
+
         if ocurred:
+            message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
             subscribers = Subscriber.query.filter_by(area=area_instance).all()
             for subscriber in subscribers:
-                message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
                 # sendmail(subscriber.email, message)
-
+                pass
