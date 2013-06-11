@@ -3,7 +3,7 @@
                     On the second run a new incident is created referencing the first one. On the third run a third incident is created
                     also referencing the first one. On the fourth run the third incident is updated to a Closed status and a incident in
                     another area is created. And on the fifth run a new incident is created with the same area as the first three, but
-                    without a parent as it's a new set of incidents."
+                    without a parent as it's a new set of incidents.",
     "test": [
         {
             "incidents": [
