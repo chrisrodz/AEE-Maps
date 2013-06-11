@@ -1,28 +1,12 @@
 # -*- coding: utf-8 -*-
-import os
 import json
 import logging
 from datetime import datetime
 
-import sendgrid
-
-from aeemaps import db, Area, Incident, Subscriber
+from aeemaps import db, Area, Incident
 import prepa
 
 logging.basicConfig(level=logging.ERROR)
-
-
-def sendmail(email, msg):
-    # make a secure connection to SendGrid
-    s = sendgrid.Sendgrid(os.environ.get('SENDGRID_USERNAME'), os.environ.get('SENDGRID_PASSWORD'), secure=True)
-
-    # make a message object
-    message = sendgrid.Message("christian.etpr10@gmail.com", "Nuevo Reporte de Avería", msg, msg)
-    # add a recipient
-    message.add_to(email, email)
-
-    # use the Web API to send your message
-    s.web.send(message)
 
 
 def get_datetime(update):
@@ -30,28 +14,28 @@ def get_datetime(update):
     return datetime.strptime(time[0]+' '+time[1], "%m/%d/%Y %H:%M")
 
 
-# city_data = json.loads(prepa.getAll())
-data = json.dumps([{
-            "incidents": [
-                    {
-                        "status": "Averia Reportada",
-                        "area": "Bo Guayo",
-                        "last_update": "06/07/2013 08:36 pm"
-                    }
-            ],
-            "name": "AGUADA"
-        },
-        {
-            "incidents": [
-                    {
-                        "status": "Personal Asignado",
-                        "area": "Bo Guayo",
-                        "last_update": "06/07/2013 09:36 pm"
-                    }
-            ],
-            "name": "AGUADA"
-        }])
-city_data = json.loads(data)
+city_data = json.loads(prepa.getAll())
+# data = json.dumps([{
+#             "incidents": [
+#                     {
+#                         "status": "Averia Reportada",
+#                         "area": "Bo Guayo",
+#                         "last_update": "06/07/2013 08:36 pm"
+#                     }
+#             ],
+#             "name": "AGUADA"
+#         },
+#         {
+#             "incidents": [
+#                     {
+#                         "status": "Personal Asignado",
+#                         "area": "Bo Guayo",
+#                         "last_update": "06/07/2013 09:36 pm"
+#                     }
+#             ],
+#             "name": "AGUADA"
+#         }])
+# city_data = json.loads(data)
 
 # For each area in db
 # Get last incident
@@ -132,9 +116,9 @@ for town in city_data:
                 db.session.commit()
                 ocurred = True
 
-        if ocurred:
-            message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
-            subscribers = Subscriber.query.filter_by(area=area_instance).all()
-            for subscriber in subscribers:
-                # sendmail(subscriber.email, message)
-                pass
+        if not ocurred:
+            i = Incident(area_id=area_instance.id, status=incident['status'],
+                         last_update=last_update, parent_id=None)
+            db.session.add(i)
+            db.session.commit()
+            ocurred = True
