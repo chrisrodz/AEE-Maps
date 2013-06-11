@@ -19,6 +19,7 @@ $(function() {
                 node: $('#map')[0],
                 size: 'large',
                 tiles: 'pueblos',
+                labels: true,
                 on_ready: function() {
                     var stateMap = {};
 
@@ -44,7 +45,7 @@ $(function() {
                         'critical': '#c0392b'
                     });
 
-                    setTimeout(renderMap, 5000);
+                    $('#map').prepend('<h1>Incidentes AEE</h1>');
                 }
             });
         });

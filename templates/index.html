@@ -1,6 +1,70 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Incidentes AEE</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <style>
+            body {
+                color: #444;
+                font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+            }
+
+            #map {
+                font-size: 38px;
+                font-weight: 100;
+                margin: 50px auto;
+                width: 1200px;
+                text-align: center;
+            }
+
+            #map h1 {
+                font-size: 38px;
+                font-weight: 100;
+            }
+
+            #legend {
+                margin: 10px auto;
+                width: 1200px;
+            }
+
+            h2 {
+                font-weight: 100;
+            }
+
+            #legend div {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+
+            .color {
+                border-radius: 100px;
+                display: inline-block;
+                height: 16px;
+                margin-right: 10px;
+                width: 16px;
+                vertical-align: middle;
+            }
+
+            #exelent .color { background: #2ecc71; }
+            #ok .color { background: #e67e22; }
+            #bad .color { background: #d35400; }
+            #critical .color { background: #c0392b; }
+        </style>
+    </head>
+    <body>
+        <div id="map">Loading Map...</div>
+        <div id="legend">
+            <h2>Legenda</h2>
+            <div id="exelent"> <span class="color"></span> 0 incidentes</div>
+            <div id="ok"> <span class="color"></span> 1 incidentes</div>
+            <div id="bad"> <span class="color"></span> 2 -4 incidentes</div>
+            <div id="critical"> <span class="color"></span> 5+ incidentes</div>
+        </div>
+
         <script src="{{ url_for('static', filename='js/vendor/d3.js') }}"></script>
         <script src="{{ url_for('static', filename='js/vendor/klass.js') }}"></script>
         <script src="{{ url_for('static', filename='js/vendor/atlaspr.js') }}"></script>
@@ -8,13 +72,5 @@
         <script src="{{ url_for('static', filename='js/vendor/lodash.js') }}"></script>
 
         <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-    </head>
-    <body>
-        <div id="map"></div>
-
-        <script type = 'text/javascript'>
-            //var node = document.getElementById("map");
-            //var map = new AtlasPR({ node: node, size: "large", tiles: 'pueblos' });
-        </script>
-  </body>
+    </body>
 </html>
