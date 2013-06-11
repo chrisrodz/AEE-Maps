@@ -9,7 +9,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import prepa
 
 app = Flask(__name__)
-app.debug = os.environ.get('DEBUG', True)
+app.debug = True if os.environ.get('DEBUG', 'True') == 'True' else False
 
 app.config['SECRET_KEY'] = "@S\x8f\x0e\x1e\x04\xd0\xfa\x9a\xdf,oJ'\x1e\xe6\xc0\xaeZ'\x8am\xee."
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:////tmp/test.db')
