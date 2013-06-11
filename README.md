@@ -12,6 +12,7 @@ Hack for PR Tech Summit. Visualize AEE Breakdowns.
 ## To-do
 
 - Cron should correctly create new incidents, update new ones, and close them. **(Ready for review)**
+- Remove subscriber and emails
 - Remove or lock down admin
 - Webhooks
  	- Look for a standard way to do this and document it so othe government API's can do the same
