@@ -30,9 +30,28 @@ def get_datetime(update):
     return datetime.strptime(time[0]+' '+time[1], "%m/%d/%Y %H:%M")
 
 
-city_data = json.loads(prepa.getAll())
-# data = json.dumps("Insert test data here")
-# city_data = json.loads(data)
+# city_data = json.loads(prepa.getAll())
+data = json.dumps([{
+            "incidents": [
+                    {
+                        "status": "Averia Reportada",
+                        "area": "Bo Guayo",
+                        "last_update": "06/07/2013 08:36 pm"
+                    }
+            ],
+            "name": "AGUADA"
+        },
+        {
+            "incidents": [
+                    {
+                        "status": "Personal Asignado",
+                        "area": "Bo Guayo",
+                        "last_update": "06/07/2013 09:36 pm"
+                    }
+            ],
+            "name": "AGUADA"
+        }])
+city_data = json.loads(data)
 
 # For each area in db
 # Get last incident
@@ -49,7 +68,7 @@ for area in areas:
                 for incident in town['incidents']:
                     if incident['area'] == last_incident.area.name:
                         close = False
-    if close:
+    if last_incident and close:
         last_incident.status = 'Closed'
         print 'Closing: ', last_incident.status, last_incident.area.name
         db.session.commit()
@@ -81,33 +100,37 @@ for town in city_data:
 
         # If last incident is closed save as new collection, else it's parent is the
         # same as last incident
-        if last_incident and last_incident.status == 'Closed':
-            i = Incident(area_id=area_instance.id, status=incident['status'],
-                         last_update=last_update, parent_id=None)
-            db.session.add(i)
-            db.session.commit()
-            ocurred = True
 
-        elif last_incident and last_incident.parent_id is not None:
-            i = Incident(area_id=area_instance.id, status=incident['status'],
-                         last_update=last_update, parent_id=last_incident.parent_id)
-            if last_incident.status != i.status:
+        flag = Incident.query.filter_by(area_id=area_instance.id, status=incident['status'], last_update=last_update).first()
+
+        if flag is None:
+            if last_incident and last_incident.status == 'Closed':
+                i = Incident(area_id=area_instance.id, status=incident['status'],
+                             last_update=last_update, parent_id=None)
                 db.session.add(i)
                 db.session.commit()
                 ocurred = True
-        elif last_incident and last_incident.parent_id is None:
-            i = Incident(area_id=area_instance.id, status=incident['status'],
-                         last_update=last_update, parent_id=last_incident.id)
-            if last_incident.status != i.status:
+
+            elif last_incident and last_incident.parent_id is not None:
+                i = Incident(area_id=area_instance.id, status=incident['status'],
+                             last_update=last_update, parent_id=last_incident.parent_id)
+                if last_incident.status != i.status:
+                    db.session.add(i)
+                    db.session.commit()
+                    ocurred = True
+            elif last_incident and last_incident.parent_id is None:
+                i = Incident(area_id=area_instance.id, status=incident['status'],
+                             last_update=last_update, parent_id=last_incident.id)
+                if last_incident.status != i.status:
+                    db.session.add(i)
+                    db.session.commit()
+                    ocurred = True
+            else:
+                i = Incident(area_id=area_instance.id, status=incident['status'],
+                             last_update=last_update, parent_id=None)
                 db.session.add(i)
                 db.session.commit()
                 ocurred = True
-        else:
-            i = Incident(area_id=area_instance.id, status=incident['status'],
-                         last_update=last_update, parent_id=None)
-            db.session.add(i)
-            db.session.commit()
-            ocurred = True
 
         if ocurred:
             message = u"Ha ocurrido una averia en %s, %s! \n Status: %s" % (area_instance.name, area_instance.pueblo, i.status)
