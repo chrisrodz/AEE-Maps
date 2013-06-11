@@ -27,3 +27,9 @@ Hack for PR Tech Summit. Visualize AEE Breakdowns.
 - CORS support
 - github.io page with more information and examples - like our map
 - Visualization example of archived data
+
+## Examples
+
+- Map of incidents
+- Archived data
+- How weather affects AEE infrastructure
