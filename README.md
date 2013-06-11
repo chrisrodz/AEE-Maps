@@ -13,6 +13,9 @@ Hack for PR Tech Summit. Visualize AEE Breakdowns.
 
 - Cron should correctly create new incidents, update new ones, and close them. **(Ready for review)**
 - Remove or lock down admin
+- Webhooks
+ 	- Look for a standard way to do this and document it so othe government API's can do the same
+ 	- Websockets vs HTTP
 - Improvements to REST API: 
   - Sensible resource names
 	- Hypermedia links
@@ -23,5 +26,3 @@ Hack for PR Tech Summit. Visualize AEE Breakdowns.
 - CORS support
 - github.io page with more information and examples - like our map
 - Visualization example of archived data
-- Webhooks
- 	- Look for a standard way to do this and document it so othe government API's can do the same
