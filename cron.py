@@ -85,9 +85,9 @@ for town in city_data:
         # If last incident is closed save as new collection, else it's parent is the
         # same as last incident
 
-        flag = Incident.query.filter_by(area_id=area_instance.id, status=incident['status'], last_update=last_update).first()
+        flag = Incident.query.filter_by(area_id=area_instance.id, status=incident['status'], last_update=last_update).all()
 
-        if flag is None:
+        if not flag:
             if last_incident and last_incident.status == 'Closed':
                 i = Incident(area_id=area_instance.id, status=incident['status'],
                              last_update=last_update, parent_id=None)
@@ -116,9 +116,9 @@ for town in city_data:
                 db.session.commit()
                 ocurred = True
 
-        if not ocurred:
-            i = Incident(area_id=area_instance.id, status=incident['status'],
-                         last_update=last_update, parent_id=None)
-            db.session.add(i)
-            db.session.commit()
-            ocurred = True
+            if not ocurred:
+                i = Incident(area_id=area_instance.id, status=incident['status'],
+                             last_update=last_update, parent_id=None)
+                db.session.add(i)
+                db.session.commit()
+                ocurred = True
