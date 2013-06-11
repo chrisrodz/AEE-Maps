@@ -1,1 +1,1 @@
-web gunicorn aeemaps:app
+web gunicorn app:app

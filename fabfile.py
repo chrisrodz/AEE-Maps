@@ -1,6 +1,6 @@
 from fabric.api import *
 
-from aeemaps import db
+from app import db
 
 
 def create_db():

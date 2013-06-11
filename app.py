@@ -1,16 +1,20 @@
+import os
+import json
+
 from flask import Flask, render_template
 from flask.ext.admin import Admin
 from flask.ext.admin.contrib.sqlamodel import ModelView
 from flask.ext.sqlalchemy import SQLAlchemy
 
 import prepa
-import os
-import json
 
 app = Flask(__name__)
-admin = Admin(app)
+app.debug = os.environ.get('DEBUG', True)
+
 app.config['SECRET_KEY'] = "@S\x8f\x0e\x1e\x04\xd0\xfa\x9a\xdf,oJ'\x1e\xe6\xc0\xaeZ'\x8am\xee."
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:////tmp/test.db')
+
+admin = Admin(app)
 db = SQLAlchemy(app)
 
 
@@ -52,9 +56,15 @@ class Incident(db.Model):
         return u'{}: {}'.format(self.status, self.last_update.isoformat())
 
 
+class AdminView(ModelView):
+    can_create = app.debug
+    can_edit = app.debug
+    can_delete = app.debug
+
+
 # Admin Model views
-admin.add_view(ModelView(Area, db.session))
-admin.add_view(ModelView(Incident, db.session))
+admin.add_view(AdminView(Area, db.session))
+admin.add_view(AdminView(Incident, db.session))
 
 
 @app.route('/', methods=['Get'])
@@ -106,5 +116,4 @@ def geotile():
 
 
 if __name__ == "__main__":
-    app.debug = True
     app.run()

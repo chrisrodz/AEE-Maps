@@ -3,7 +3,7 @@ import json
 import logging
 from datetime import datetime
 
-from aeemaps import db, Area, Incident
+from app import db, Area, Incident
 import prepa
 
 logging.basicConfig(level=logging.ERROR)
